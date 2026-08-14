@@ -1,18 +1,94 @@
-# React + Vite
+# TravelMate - Travel & Trip Planning System
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+TravelMate is a responsive travel and trip planning web application developed using React and Tailwind CSS.
 
-Currently, two official plugins are available:
+The system provides a simple interface for users to explore destinations, plan trips, manage their trips, and view travel-related information. It also includes an admin dashboard for managing users, trips, and destinations.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+This project is being developed as a series of practical experiments covering frontend development, React, APIs, backend development, database integration, and deployment.
 
-## React Compiler
+---
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+## Features
 
-Note: This will impact Vite dev & build performances.
+### Home Page
+- Introduction to the TravelMate system
+- Destination search section
+- Popular destinations
+- Navigation to different sections
 
-## Expanding the ESLint configuration
+### Login & Registration
+- Login interface
+- Registration interface
+- Responsive authentication form
+- Login/Register toggle
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Destinations
+- List of popular destinations
+- Destination search interface
+- Location filter
+- Responsive destination cards
+
+### Trip Planner
+- Select destination
+- Select start and end dates
+- Select number of travellers
+- Select budget
+- Select travel preferences
+- Create trip interface
+
+### User Dashboard
+- View total trips
+- View upcoming trips
+- View completed trips
+- View recent trips
+- Quick actions for planning new trips
+
+### Admin Dashboard
+- View total users
+- View total trips
+- View available destinations
+- View recent trips
+- Basic management options
+
+---
+
+## Technologies Used
+
+- React.js
+- Tailwind CSS
+- Vite
+- JavaScript
+- HTML
+- CSS
+
+---
+
+## Project Structure
+
+```text
+TravelMate/
+│
+├── public/
+│
+├── src/
+│   ├── assets/
+│   │
+│   ├── pages/
+│   │   ├── AdminDashboard.jsx
+│   │   ├── Auth.jsx
+│   │   ├── Dashboard.jsx
+│   │   ├── Destinations.jsx
+│   │   └── Planner.jsx
+│   │
+│   ├── App.jsx
+│   ├── App.css
+│   ├── index.css
+│   └── main.jsx
+│
+├── .gitignore
+├── eslint.config.js
+├── index.html
+├── package.json
+├── package-lock.json
+├── README.md
+└── vite.config.js
