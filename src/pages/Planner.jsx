@@ -1,4 +1,22 @@
+
+import { useState } from 'react'
 function Planner() {
+  const [destination, setDestination] = useState('')
+const [startDate, setStartDate] = useState('')
+const [endDate, setEndDate] = useState('')
+const [travellers, setTravellers] = useState('')
+const [budget, setBudget] = useState('')
+const handleSubmit = (e) => {
+  e.preventDefault()
+
+  console.log({
+    destination,
+    startDate,
+    endDate,
+    travellers,
+    budget
+  })
+}
   return (
     <div className="min-h-screen bg-gray-50">
 
@@ -59,7 +77,10 @@ function Planner() {
       {/* Trip Form */}
       <section className="mx-auto max-w-3xl px-6 pb-12">
 
-        <div className="rounded-lg bg-white p-6 shadow-sm">
+        <form
+  onSubmit={handleSubmit}
+  className="rounded-lg bg-white p-6 shadow-sm"
+>
 
           {/* Destination */}
           <div>
@@ -68,8 +89,10 @@ function Planner() {
             </label>
 
             <select
-              className="w-full rounded-md border border-gray-300 px-4 py-2 outline-none focus:border-blue-500"
-            >
+  value={destination}
+  onChange={(e) => setDestination(e.target.value)}
+  className="w-full rounded-md border border-gray-300 px-4 py-2 outline-none focus:border-blue-500"
+>
               <option>Select destination</option>
               <option>Goa</option>
               <option>Manali</option>
@@ -91,10 +114,11 @@ function Planner() {
               </label>
 
               <input
-                type="date"
-                className="w-full rounded-md border border-gray-300 px-4 py-2 outline-none focus:border-blue-500"
-              />
-
+  type="date"
+  value={startDate}
+  onChange={(e) => setStartDate(e.target.value)}
+  className="w-full rounded-md border border-gray-300 px-4 py-2 outline-none focus:border-blue-500"
+/>
             </div>
 
 
@@ -105,9 +129,11 @@ function Planner() {
               </label>
 
               <input
-                type="date"
-                className="w-full rounded-md border border-gray-300 px-4 py-2 outline-none focus:border-blue-500"
-              />
+  type="date"
+  value={endDate}
+  onChange={(e) => setEndDate(e.target.value)}
+  className="w-full rounded-md border border-gray-300 px-4 py-2 outline-none focus:border-blue-500"
+/>
 
             </div>
 
@@ -124,8 +150,10 @@ function Planner() {
               </label>
 
               <select
-                className="w-full rounded-md border border-gray-300 px-4 py-2 outline-none focus:border-blue-500"
-              >
+  value={travellers}
+  onChange={(e) => setTravellers(e.target.value)}
+  className="w-full rounded-md border border-gray-300 px-4 py-2 outline-none focus:border-blue-500"
+>
                 <option>1 Traveller</option>
                 <option>2 Travellers</option>
                 <option>3 Travellers</option>
@@ -143,8 +171,10 @@ function Planner() {
               </label>
 
               <select
-                className="w-full rounded-md border border-gray-300 px-4 py-2 outline-none focus:border-blue-500"
-              >
+  value={budget}
+  onChange={(e) => setBudget(e.target.value)}
+  className="w-full rounded-md border border-gray-300 px-4 py-2 outline-none focus:border-blue-500"
+>
                 <option>Select budget</option>
                 <option>Budget</option>
                 <option>Moderate</option>
