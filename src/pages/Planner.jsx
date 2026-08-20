@@ -229,7 +229,7 @@ const handleSubmit = (e) => {
             Create My Trip
           </button>
 
-        </div>
+       </form>
 
       </section>
 

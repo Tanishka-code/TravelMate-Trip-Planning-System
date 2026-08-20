@@ -1,37 +1,12 @@
-function Destinations() {
-  const destinations = [
-    {
-      name: 'Goa',
-      location: 'India',
-      description: 'Beaches, sightseeing and relaxing vacations.',
-    },
-    {
-      name: 'Manali',
-      location: 'Himachal Pradesh',
-      description: 'Mountains, nature and adventure activities.',
-    },
-    {
-      name: 'Jaipur',
-      location: 'Rajasthan',
-      description: 'History, culture and beautiful heritage sites.',
-    },
-    {
-      name: 'Kerala',
-      location: 'India',
-      description: 'Backwaters, nature and peaceful surroundings.',
-    },
-    {
-      name: 'Mumbai',
-      location: 'Maharashtra',
-      description: 'Explore the city, food, beaches and famous landmarks.',
-    },
-    {
-      name: 'Udaipur',
-      location: 'Rajasthan',
-      description: 'Lakes, palaces and traditional Rajasthani culture.',
-    },
-  ]
+import { useEffect, useState } from 'react'
+import destinationsData from '../data/destinations'
 
+function Destinations() {
+  const [destinations, setDestinations] = useState([])
+  useEffect(() => {
+  setDestinations(destinationsData)
+}, [])
+  
   return (
     <div className="min-h-screen bg-gray-50">
 
