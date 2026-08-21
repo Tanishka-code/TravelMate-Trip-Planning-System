@@ -1,7 +1,27 @@
 import { useState } from 'react'
+import useForm from '../hooks/useForm'
 
 function Auth() {
   const [isRegister, setIsRegister] = useState(false)
+
+  const {
+    formData,
+    handleChange,
+    resetForm
+  } = useForm({
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: ''
+  })
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+
+    console.log('Form Data:', formData)
+
+    resetForm()
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -34,6 +54,7 @@ function Auth() {
           <div className="mb-6 flex border-b">
 
             <button
+              type="button"
               onClick={() => setIsRegister(false)}
               className={`w-1/2 pb-3 text-sm font-medium ${
                 !isRegister
@@ -45,6 +66,7 @@ function Auth() {
             </button>
 
             <button
+              type="button"
               onClick={() => setIsRegister(true)}
               className={`w-1/2 pb-3 text-sm font-medium ${
                 isRegister
@@ -58,99 +80,122 @@ function Auth() {
           </div>
 
 
-          <h2 className="text-2xl font-bold text-gray-800">
-            {isRegister ? 'Create an Account' : 'Welcome Back'}
-          </h2>
+          {/* Form */}
+          <form onSubmit={handleSubmit}>
 
-          <p className="mt-2 text-sm text-gray-600">
-            {isRegister
-              ? 'Create an account to start planning your trips.'
-              : 'Login to manage your trips and bookings.'}
-          </p>
+            <h2 className="text-2xl font-bold text-gray-800">
+              {isRegister ? 'Create an Account' : 'Welcome Back'}
+            </h2>
+
+            <p className="mt-2 text-sm text-gray-600">
+              {isRegister
+                ? 'Create an account to start planning your trips.'
+                : 'Login to manage your trips and bookings.'}
+            </p>
 
 
-          {/* Registration Name */}
-          {isRegister && (
+            {/* Registration Name */}
+            {isRegister && (
+              <div className="mt-5">
+                <label className="mb-2 block text-sm font-medium text-gray-700">
+                  Full Name
+                </label>
+
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  placeholder="Enter your name"
+                  className="w-full rounded-md border border-gray-300 px-4 py-2 outline-none focus:border-blue-500"
+                />
+              </div>
+            )}
+
+
+            {/* Email */}
             <div className="mt-5">
+
               <label className="mb-2 block text-sm font-medium text-gray-700">
-                Full Name
+                Email
               </label>
 
               <input
-                type="text"
-                placeholder="Enter your name"
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="Enter your email"
                 className="w-full rounded-md border border-gray-300 px-4 py-2 outline-none focus:border-blue-500"
               />
+
             </div>
-          )}
 
 
-          {/* Email */}
-          <div className="mt-5">
-
-            <label className="mb-2 block text-sm font-medium text-gray-700">
-              Email
-            </label>
-
-            <input
-              type="email"
-              placeholder="Enter your email"
-              className="w-full rounded-md border border-gray-300 px-4 py-2 outline-none focus:border-blue-500"
-            />
-
-          </div>
-
-
-          {/* Password */}
-          <div className="mt-5">
-
-            <label className="mb-2 block text-sm font-medium text-gray-700">
-              Password
-            </label>
-
-            <input
-              type="password"
-              placeholder="Enter your password"
-              className="w-full rounded-md border border-gray-300 px-4 py-2 outline-none focus:border-blue-500"
-            />
-
-          </div>
-
-
-          {/* Confirm Password */}
-          {isRegister && (
+            {/* Password */}
             <div className="mt-5">
 
               <label className="mb-2 block text-sm font-medium text-gray-700">
-                Confirm Password
+                Password
               </label>
 
               <input
                 type="password"
-                placeholder="Confirm your password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="Enter your password"
                 className="w-full rounded-md border border-gray-300 px-4 py-2 outline-none focus:border-blue-500"
               />
 
             </div>
-          )}
 
 
-          {/* Forgot Password */}
-          {!isRegister && (
-            <div className="mt-3 text-right">
+            {/* Confirm Password */}
+            {isRegister && (
+              <div className="mt-5">
 
-              <button className="text-sm text-blue-600 hover:underline">
-                Forgot Password?
-              </button>
+                <label className="mb-2 block text-sm font-medium text-gray-700">
+                  Confirm Password
+                </label>
 
-            </div>
-          )}
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  placeholder="Confirm your password"
+                  className="w-full rounded-md border border-gray-300 px-4 py-2 outline-none focus:border-blue-500"
+                />
+
+              </div>
+            )}
 
 
-          {/* Submit */}
-          <button className="mt-6 w-full rounded-md bg-blue-600 py-2.5 font-medium text-white hover:bg-blue-700">
-            {isRegister ? 'Create Account' : 'Login'}
-          </button>
+            {/* Forgot Password */}
+            {!isRegister && (
+              <div className="mt-3 text-right">
+
+                <button
+                  type="button"
+                  className="text-sm text-blue-600 hover:underline"
+                >
+                  Forgot Password?
+                </button>
+
+              </div>
+            )}
+
+
+            {/* Submit */}
+            <button
+              type="submit"
+              className="mt-6 w-full rounded-md bg-blue-600 py-2.5 font-medium text-white hover:bg-blue-700"
+            >
+              {isRegister ? 'Create Account' : 'Login'}
+            </button>
+
+          </form>
 
 
           {/* Switch */}
@@ -161,6 +206,7 @@ function Auth() {
               : "Don't have an account?"}
 
             <button
+              type="button"
               onClick={() => setIsRegister(!isRegister)}
               className="ml-1 font-medium text-blue-600 hover:underline"
             >
