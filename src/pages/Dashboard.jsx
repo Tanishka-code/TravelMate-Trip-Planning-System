@@ -1,4 +1,9 @@
+import { useContext } from 'react'
+import { AuthContext } from '../context/AuthContext'
+
 function Dashboard() {
+  const { currentUser, logout } = useContext(AuthContext)
+
   return (
     <div className="min-h-screen bg-gray-50">
 
@@ -36,12 +41,12 @@ function Dashboard() {
               Plan Trip
             </a>
 
-            <a
-              href="/auth"
+            <button
+              onClick={logout}
               className="text-gray-600 hover:text-blue-600"
             >
               Logout
-            </a>
+            </button>
 
           </div>
 
@@ -52,16 +57,17 @@ function Dashboard() {
       {/* Dashboard Content */}
       <main className="mx-auto max-w-6xl px-6 py-10">
 
-        {/* Welcome */}
-        <div>
-          <h1 className="text-3xl font-bold text-gray-800">
-            Welcome back!
-          </h1>
+        <h1 className="text-2xl font-bold text-gray-800">
+          Dashboard
+        </h1>
 
-          <p className="mt-2 text-gray-600">
-            Manage your trips and view your travel information.
-          </p>
-        </div>
+        <p className="mt-2 text-sm text-gray-600">
+          Welcome, {currentUser?.name || 'Traveler'}
+        </p>
+
+        <p className="mt-2 text-gray-600">
+          Manage your trips and view your travel information.
+        </p>
 
 
         {/* Summary Cards */}

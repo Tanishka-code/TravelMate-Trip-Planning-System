@@ -1,8 +1,11 @@
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import useForm from '../hooks/useForm'
+import { AuthContext } from '../context/AuthContext'
 
 function Auth() {
   const [isRegister, setIsRegister] = useState(false)
+
+  const { login } = useContext(AuthContext)
 
   const {
     formData,
@@ -15,13 +18,18 @@ function Auth() {
     confirmPassword: ''
   })
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
+ const handleSubmit = (e) => {
+  e.preventDefault()
 
-    console.log('Form Data:', formData)
+  console.log('Form Data:', formData)
 
-    resetForm()
-  }
+  login({
+    name: formData.name || 'TravelMate User',
+    email: formData.email
+  })
+
+  resetForm()
+}
 
   return (
     <div className="min-h-screen bg-gray-50">

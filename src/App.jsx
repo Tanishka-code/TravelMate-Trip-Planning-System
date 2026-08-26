@@ -1,4 +1,3 @@
-import './App.css'
 import Auth from './pages/Auth'
 import Destinations from './pages/Destinations'
 import Planner from './pages/Planner'
