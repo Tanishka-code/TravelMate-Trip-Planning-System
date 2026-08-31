@@ -1,8 +1,10 @@
 import { useContext } from 'react'
 import { AuthContext } from '../context/AuthContext'
+import { TripContext } from '../context/TripContext'
 
 function Dashboard() {
   const { currentUser, logout } = useContext(AuthContext)
+  const { trips, removeTrip } = useContext(TripContext)
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -79,7 +81,7 @@ function Dashboard() {
             </p>
 
             <p className="mt-2 text-3xl font-bold text-blue-600">
-              2
+              {trips.length}
             </p>
           </div>
 
@@ -90,7 +92,7 @@ function Dashboard() {
             </p>
 
             <p className="mt-2 text-3xl font-bold text-blue-600">
-              1
+              {trips.length}
             </p>
           </div>
 
@@ -139,7 +141,10 @@ function Dashboard() {
 
               </div>
 
-              <button className="rounded-md bg-blue-600 px-5 py-2 text-sm font-medium text-white hover:bg-blue-700">
+              <button
+                type="button"
+                className="rounded-md bg-blue-600 px-5 py-2 text-sm font-medium text-white hover:bg-blue-700"
+              >
                 View Trip
               </button>
 
@@ -159,11 +164,12 @@ function Dashboard() {
 
           <div className="mt-4 overflow-x-auto rounded-lg bg-white shadow-sm">
 
-            <table className="w-full min-w-[500px] text-left text-sm">
+            <table className="w-full min-w-[600px] text-left text-sm">
 
               <thead className="border-b bg-gray-50">
 
                 <tr>
+
                   <th className="px-5 py-4 font-medium text-gray-600">
                     Destination
                   </th>
@@ -177,8 +183,13 @@ function Dashboard() {
                   </th>
 
                   <th className="px-5 py-4 font-medium text-gray-600">
-                    Status
+                    Budget
                   </th>
+
+                  <th className="px-5 py-4 font-medium text-gray-600">
+                    Action
+                  </th>
+
                 </tr>
 
               </thead>
@@ -186,46 +197,61 @@ function Dashboard() {
 
               <tbody>
 
-                <tr className="border-b">
+                {trips.length === 0 ? (
 
-                  <td className="px-5 py-4 font-medium text-gray-800">
-                    Goa
-                  </td>
+                  <tr>
 
-                  <td className="px-5 py-4 text-gray-600">
-                    10 Jun - 14 Jun
-                  </td>
+                    <td
+                      colSpan="5"
+                      className="px-5 py-8 text-center text-gray-500"
+                    >
+                      No trips added yet. Create a trip from the Planner.
+                    </td>
 
-                  <td className="px-5 py-4 text-gray-600">
-                    2
-                  </td>
+                  </tr>
 
-                  <td className="px-5 py-4 text-green-600">
-                    Completed
-                  </td>
+                ) : (
 
-                </tr>
+                  trips.map((trip) => (
 
+                    <tr
+                      key={trip.id}
+                      className="border-b"
+                    >
 
-                <tr>
+                      <td className="px-5 py-4 font-medium text-gray-800">
+                        {trip.destination}
+                      </td>
 
-                  <td className="px-5 py-4 font-medium text-gray-800">
-                    Manali
-                  </td>
+                      <td className="px-5 py-4 text-gray-600">
+                        {trip.startDate} - {trip.endDate}
+                      </td>
 
-                  <td className="px-5 py-4 text-gray-600">
-                    20 Apr - 24 Apr
-                  </td>
+                      <td className="px-5 py-4 text-gray-600">
+                        {trip.travellers}
+                      </td>
 
-                  <td className="px-5 py-4 text-gray-600">
-                    3
-                  </td>
+                      <td className="px-5 py-4 text-gray-600">
+                        {trip.budget}
+                      </td>
 
-                  <td className="px-5 py-4 text-green-600">
-                    Completed
-                  </td>
+                      <td className="px-5 py-4">
 
-                </tr>
+                        <button
+                          type="button"
+                          onClick={() => removeTrip(trip.id)}
+                          className="text-red-600 hover:underline"
+                        >
+                          Remove
+                        </button>
+
+                      </td>
+
+                    </tr>
+
+                  ))
+
+                )}
 
               </tbody>
 

@@ -1,22 +1,38 @@
+import { useContext, useState } from 'react'
+import { TripContext } from '../context/TripContext'
 
-import { useState } from 'react'
 function Planner() {
-  const [destination, setDestination] = useState('')
-const [startDate, setStartDate] = useState('')
-const [endDate, setEndDate] = useState('')
-const [travellers, setTravellers] = useState('')
-const [budget, setBudget] = useState('')
-const handleSubmit = (e) => {
-  e.preventDefault()
+  const { addTrip } = useContext(TripContext)
 
-  console.log({
-    destination,
-    startDate,
-    endDate,
-    travellers,
-    budget
-  })
-}
+  const [destination, setDestination] = useState('')
+  const [startDate, setStartDate] = useState('')
+  const [endDate, setEndDate] = useState('')
+  const [travellers, setTravellers] = useState('')
+  const [budget, setBudget] = useState('')
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+
+    const newTrip = {
+      id: Date.now(),
+      destination,
+      startDate,
+      endDate,
+      travellers,
+      budget
+    }
+
+    addTrip(newTrip)
+
+    console.log('Trip Added:', newTrip)
+
+    setDestination('')
+    setStartDate('')
+    setEndDate('')
+    setTravellers('')
+    setBudget('')
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
 
@@ -78,29 +94,31 @@ const handleSubmit = (e) => {
       <section className="mx-auto max-w-3xl px-6 pb-12">
 
         <form
-  onSubmit={handleSubmit}
-  className="rounded-lg bg-white p-6 shadow-sm"
->
+          onSubmit={handleSubmit}
+          className="rounded-lg bg-white p-6 shadow-sm"
+        >
 
           {/* Destination */}
           <div>
+
             <label className="mb-2 block text-sm font-medium text-gray-700">
               Destination
             </label>
 
             <select
-  value={destination}
-  onChange={(e) => setDestination(e.target.value)}
-  className="w-full rounded-md border border-gray-300 px-4 py-2 outline-none focus:border-blue-500"
->
-              <option>Select destination</option>
-              <option>Goa</option>
-              <option>Manali</option>
-              <option>Jaipur</option>
-              <option>Kerala</option>
-              <option>Mumbai</option>
-              <option>Udaipur</option>
+              value={destination}
+              onChange={(e) => setDestination(e.target.value)}
+              className="w-full rounded-md border border-gray-300 px-4 py-2 outline-none focus:border-blue-500"
+            >
+              <option value="">Select destination</option>
+              <option value="Goa">Goa</option>
+              <option value="Manali">Manali</option>
+              <option value="Jaipur">Jaipur</option>
+              <option value="Kerala">Kerala</option>
+              <option value="Mumbai">Mumbai</option>
+              <option value="Udaipur">Udaipur</option>
             </select>
+
           </div>
 
 
@@ -114,11 +132,12 @@ const handleSubmit = (e) => {
               </label>
 
               <input
-  type="date"
-  value={startDate}
-  onChange={(e) => setStartDate(e.target.value)}
-  className="w-full rounded-md border border-gray-300 px-4 py-2 outline-none focus:border-blue-500"
-/>
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="w-full rounded-md border border-gray-300 px-4 py-2 outline-none focus:border-blue-500"
+              />
+
             </div>
 
 
@@ -129,11 +148,11 @@ const handleSubmit = (e) => {
               </label>
 
               <input
-  type="date"
-  value={endDate}
-  onChange={(e) => setEndDate(e.target.value)}
-  className="w-full rounded-md border border-gray-300 px-4 py-2 outline-none focus:border-blue-500"
-/>
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                className="w-full rounded-md border border-gray-300 px-4 py-2 outline-none focus:border-blue-500"
+              />
 
             </div>
 
@@ -150,15 +169,16 @@ const handleSubmit = (e) => {
               </label>
 
               <select
-  value={travellers}
-  onChange={(e) => setTravellers(e.target.value)}
-  className="w-full rounded-md border border-gray-300 px-4 py-2 outline-none focus:border-blue-500"
->
-                <option>1 Traveller</option>
-                <option>2 Travellers</option>
-                <option>3 Travellers</option>
-                <option>4 Travellers</option>
-                <option>5+ Travellers</option>
+                value={travellers}
+                onChange={(e) => setTravellers(e.target.value)}
+                className="w-full rounded-md border border-gray-300 px-4 py-2 outline-none focus:border-blue-500"
+              >
+                <option value="">Select travellers</option>
+                <option value="1 Traveller">1 Traveller</option>
+                <option value="2 Travellers">2 Travellers</option>
+                <option value="3 Travellers">3 Travellers</option>
+                <option value="4 Travellers">4 Travellers</option>
+                <option value="5+ Travellers">5+ Travellers</option>
               </select>
 
             </div>
@@ -171,14 +191,14 @@ const handleSubmit = (e) => {
               </label>
 
               <select
-  value={budget}
-  onChange={(e) => setBudget(e.target.value)}
-  className="w-full rounded-md border border-gray-300 px-4 py-2 outline-none focus:border-blue-500"
->
-                <option>Select budget</option>
-                <option>Budget</option>
-                <option>Moderate</option>
-                <option>Luxury</option>
+                value={budget}
+                onChange={(e) => setBudget(e.target.value)}
+                className="w-full rounded-md border border-gray-300 px-4 py-2 outline-none focus:border-blue-500"
+              >
+                <option value="">Select budget</option>
+                <option value="Budget">Budget</option>
+                <option value="Moderate">Moderate</option>
+                <option value="Luxury">Luxury</option>
               </select>
 
             </div>
@@ -195,27 +215,45 @@ const handleSubmit = (e) => {
 
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
 
-              <button className="rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-700 hover:border-blue-500 hover:text-blue-600">
+              <button
+                type="button"
+                className="rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-700 hover:border-blue-500 hover:text-blue-600"
+              >
                 Adventure
               </button>
 
-              <button className="rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-700 hover:border-blue-500 hover:text-blue-600">
+              <button
+                type="button"
+                className="rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-700 hover:border-blue-500 hover:text-blue-600"
+              >
                 Nature
               </button>
 
-              <button className="rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-700 hover:border-blue-500 hover:text-blue-600">
+              <button
+                type="button"
+                className="rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-700 hover:border-blue-500 hover:text-blue-600"
+              >
                 Food
               </button>
 
-              <button className="rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-700 hover:border-blue-500 hover:text-blue-600">
+              <button
+                type="button"
+                className="rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-700 hover:border-blue-500 hover:text-blue-600"
+              >
                 Culture
               </button>
 
-              <button className="rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-700 hover:border-blue-500 hover:text-blue-600">
+              <button
+                type="button"
+                className="rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-700 hover:border-blue-500 hover:text-blue-600"
+              >
                 Shopping
               </button>
 
-              <button className="rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-700 hover:border-blue-500 hover:text-blue-600">
+              <button
+                type="button"
+                className="rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-700 hover:border-blue-500 hover:text-blue-600"
+              >
                 Relaxation
               </button>
 
@@ -225,11 +263,14 @@ const handleSubmit = (e) => {
 
 
           {/* Create Trip Button */}
-          <button className="mt-7 w-full rounded-md bg-blue-600 py-2.5 font-medium text-white hover:bg-blue-700">
+          <button
+            type="submit"
+            className="mt-7 w-full rounded-md bg-blue-600 py-2.5 font-medium text-white hover:bg-blue-700"
+          >
             Create My Trip
           </button>
 
-       </form>
+        </form>
 
       </section>
 
