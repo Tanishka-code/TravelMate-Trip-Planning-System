@@ -78,6 +78,7 @@ router.post(
 router.get(
   "/profile",
   authMiddleware,
+  authorize("user", "admin"),
   getProfile
 );
 
