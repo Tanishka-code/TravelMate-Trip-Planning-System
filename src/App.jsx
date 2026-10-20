@@ -3,25 +3,35 @@ import Destinations from './pages/Destinations'
 import Planner from './pages/Planner'
 import Dashboard from './pages/Dashboard'
 import AdminDashboard from './pages/AdminDashboard'
+import Chat from './pages/Chat'
 
 function App() {
   const path = window.location.pathname
 
-if (path === '/auth') {
-  return <Auth />
-}
-if (path === '/destinations') {
-  return <Destinations />
-}
-if (path === '/planner') {
-  return <Planner />
-}
-if (path === '/dashboard') {
-  return <Dashboard />
-}
-if (path === '/admin') {
-  return <AdminDashboard />
-}
+  if (path === '/auth') {
+    return <Auth />
+  }
+
+  if (path === '/destinations') {
+    return <Destinations />
+  }
+
+  if (path === '/planner') {
+    return <Planner />
+  }
+
+  if (path === '/dashboard') {
+    return <Dashboard />
+  }
+
+  if (path === '/admin') {
+    return <AdminDashboard />
+  }
+
+  if (path === '/chat') {
+    return <Chat />
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
 
@@ -34,49 +44,59 @@ if (path === '/admin') {
           </h1>
 
           <div className="flex gap-6 text-sm">
-            <a href="#" className="text-blue-600">
+
+            <a
+              href="/"
+              className="text-blue-600"
+            >
               Home
             </a>
 
             <a
-  href="/destinations"
-  className="text-gray-600 hover:text-blue-600"
->
-  Destinations
-</a>
+              href="/destinations"
+              className="text-gray-600 hover:text-blue-600"
+            >
+              Destinations
+            </a>
 
             <a
-  href="/auth"
-  className="text-gray-600 hover:text-blue-600"
->
-  Login
-</a>
-          </div>
+              href="/auth"
+              className="text-gray-600 hover:text-blue-600"
+            >
+              Login
+            </a>
 
+            <a
+              href="/chat"
+              className="text-gray-600 hover:text-blue-600"
+            >
+              Chat
+            </a>
+
+          </div>
         </div>
       </nav>
-
 
       {/* Introduction */}
       <section className="bg-blue-600 px-6 py-16 text-center text-white">
 
-  <h2 className="text-3xl font-bold md:text-4xl">
-    Travel & Trip Planning System
-  </h2>
+        <h2 className="text-3xl font-bold md:text-4xl">
+          Travel & Trip Planning System
+        </h2>
 
-  <p className="mx-auto mt-4 max-w-2xl text-blue-100">
-    Plan your trips easily, explore new destinations,
-    and organize your travel journey in one place.
-  </p>
+        <p className="mx-auto mt-4 max-w-2xl text-blue-100">
+          Plan your trips easily, explore new destinations,
+          and organize your travel journey in one place.
+        </p>
 
-  <a
-    href="/planner"
-    className="mt-6 inline-block rounded-md bg-white px-6 py-2.5 font-medium text-blue-600 hover:bg-gray-100"
-  >
-    Plan Your Trip
-  </a>
+        <a
+          href="/planner"
+          className="mt-6 inline-block rounded-md bg-white px-6 py-2.5 font-medium text-blue-600 hover:bg-gray-100"
+        >
+          Plan Your Trip
+        </a>
 
-</section>
+      </section>
 
       {/* Search */}
       <section className="mx-auto -mt-6 max-w-4xl px-6">
@@ -116,7 +136,6 @@ if (path === '/admin') {
           Explore some popular travel destinations.
         </p>
 
-
         <div className="mt-6 grid grid-cols-1 gap-5 md:grid-cols-3">
 
           {/* Goa */}
@@ -136,7 +155,6 @@ if (path === '/admin') {
 
           </div>
 
-
           {/* Manali */}
           <div className="rounded-lg bg-white p-5 shadow-sm">
 
@@ -153,7 +171,6 @@ if (path === '/admin') {
             </button>
 
           </div>
-
 
           {/* Jaipur */}
           <div className="rounded-lg bg-white p-5 shadow-sm">
@@ -176,7 +193,6 @@ if (path === '/admin') {
 
       </section>
 
-
       {/* Why TravelMate */}
       <section className="bg-white px-6 py-12">
 
@@ -198,7 +214,6 @@ if (path === '/admin') {
               </p>
             </div>
 
-
             <div className="rounded-lg border border-gray-200 p-5">
               <h3 className="font-semibold text-gray-800">
                 Explore Destinations
@@ -208,7 +223,6 @@ if (path === '/admin') {
                 Find and explore different destinations for your next trip.
               </p>
             </div>
-
 
             <div className="rounded-lg border border-gray-200 p-5">
               <h3 className="font-semibold text-gray-800">
@@ -225,7 +239,6 @@ if (path === '/admin') {
         </div>
 
       </section>
-
 
       {/* Footer */}
       <footer className="bg-gray-800 px-6 py-6 text-center text-sm text-gray-300">
