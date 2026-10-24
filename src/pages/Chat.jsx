@@ -1,6 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { io } from 'socket.io-client'
 
+const SOCKET_URL = (
+  import.meta.env.VITE_API_URL || 'http://localhost:5000'
+).replace(/\/$/, '')
+
 function Chat() {
   const socketRef = useRef(null)
 
@@ -10,7 +14,7 @@ function Chat() {
   const [connected, setConnected] = useState(false)
 
   useEffect(() => {
-    const socket = io('http://localhost:5000')
+    const socket = io(SOCKET_URL)
 
     socketRef.current = socket
 

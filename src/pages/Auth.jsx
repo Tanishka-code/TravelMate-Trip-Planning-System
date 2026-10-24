@@ -2,6 +2,12 @@ import { useContext, useState } from 'react'
 import useForm from '../hooks/useForm'
 import { AuthContext } from '../Context/AuthContext'
 
+// Use the deployed backend URL when configured in Vercel.
+// Otherwise, use the local backend during development.
+const API_BASE_URL = (
+  import.meta.env.VITE_API_URL || 'http://localhost:5000'
+).replace(/\/$/, '')
+
 function Auth() {
   const [isRegister, setIsRegister] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
@@ -54,7 +60,7 @@ function Auth() {
 
     try {
       const response = await fetch(
-        `http://localhost:5000/api/users/${endpoint}`,
+        `${API_BASE_URL}/api/users/${endpoint}`,
         {
           method: 'POST',
           headers: {
