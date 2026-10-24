@@ -1,6 +1,6 @@
 import { useContext } from 'react'
-import { AuthContext } from '../context/AuthContext'
-import { TripContext } from '../context/TripContext'
+import { AuthContext } from '../Context/AuthContext'
+import { TripContext } from '../Context/TripContext'
 
 function Dashboard() {
   const { currentUser, logout } = useContext(AuthContext)

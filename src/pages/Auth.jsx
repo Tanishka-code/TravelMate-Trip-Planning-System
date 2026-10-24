@@ -1,6 +1,6 @@
 import { useContext, useState } from 'react'
 import useForm from '../hooks/useForm'
-import { AuthContext } from '../context/AuthContext'
+import { AuthContext } from '../Context/AuthContext'
 
 function Auth() {
   const [isRegister, setIsRegister] = useState(false)
@@ -109,6 +109,7 @@ function Auth() {
       {/* Navbar */}
       <nav className="bg-white shadow-sm">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+
           <a
             href="/"
             className="text-xl font-bold text-blue-600"
@@ -122,6 +123,7 @@ function Auth() {
           >
             Back to Home
           </a>
+
         </div>
       </nav>
 
@@ -131,6 +133,7 @@ function Auth() {
 
           {/* Tabs */}
           <div className="mb-6 flex border-b">
+
             <button
               type="button"
               onClick={() => {
@@ -162,9 +165,10 @@ function Auth() {
             >
               Register
             </button>
+
           </div>
 
-          {/* Success and Error Messages */}
+          {/* Error Message */}
           {errorMessage && (
             <p
               className="mb-4 text-sm text-red-600"
@@ -174,6 +178,7 @@ function Auth() {
             </p>
           )}
 
+          {/* Success Message */}
           {successMessage && (
             <p
               className="mb-4 text-sm text-green-600"
@@ -310,6 +315,7 @@ function Auth() {
                   ? 'Create Account'
                   : 'Login'}
             </button>
+
           </form>
 
           {/* Switch Between Login and Register */}
@@ -333,6 +339,7 @@ function Auth() {
 
         </div>
       </div>
+
     </div>
   )
 }

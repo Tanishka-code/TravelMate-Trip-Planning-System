@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react'
-import { TripContext } from '../context/TripContext'
+import { TripContext } from '../Context/TripContext'
 
 function Planner() {
   const { addTrip } = useContext(TripContext)
@@ -35,11 +35,9 @@ function Planner() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-
       {/* Navbar */}
       <nav className="bg-white shadow-sm">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-
           <a
             href="/"
             className="text-xl font-bold text-blue-600"
@@ -48,7 +46,6 @@ function Planner() {
           </a>
 
           <div className="flex gap-5 text-sm">
-
             <a
               href="/"
               className="text-gray-600 hover:text-blue-600"
@@ -69,16 +66,12 @@ function Planner() {
             >
               Login
             </a>
-
           </div>
-
         </div>
       </nav>
 
-
       {/* Page Heading */}
       <section className="px-6 py-10 text-center">
-
         <h1 className="text-3xl font-bold text-gray-800">
           Plan Your Trip
         </h1>
@@ -86,21 +79,16 @@ function Planner() {
         <p className="mt-3 text-gray-600">
           Enter your trip details and create your travel plan.
         </p>
-
       </section>
-
 
       {/* Trip Form */}
       <section className="mx-auto max-w-3xl px-6 pb-12">
-
         <form
           onSubmit={handleSubmit}
           className="rounded-lg bg-white p-6 shadow-sm"
         >
-
           {/* Destination */}
           <div>
-
             <label className="mb-2 block text-sm font-medium text-gray-700">
               Destination
             </label>
@@ -118,15 +106,11 @@ function Planner() {
               <option value="Mumbai">Mumbai</option>
               <option value="Udaipur">Udaipur</option>
             </select>
-
           </div>
-
 
           {/* Dates */}
           <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
-
             <div>
-
               <label className="mb-2 block text-sm font-medium text-gray-700">
                 Start Date
               </label>
@@ -137,12 +121,9 @@ function Planner() {
                 onChange={(e) => setStartDate(e.target.value)}
                 className="w-full rounded-md border border-gray-300 px-4 py-2 outline-none focus:border-blue-500"
               />
-
             </div>
 
-
             <div>
-
               <label className="mb-2 block text-sm font-medium text-gray-700">
                 End Date
               </label>
@@ -153,17 +134,12 @@ function Planner() {
                 onChange={(e) => setEndDate(e.target.value)}
                 className="w-full rounded-md border border-gray-300 px-4 py-2 outline-none focus:border-blue-500"
               />
-
             </div>
-
           </div>
-
 
           {/* Travellers and Budget */}
           <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
-
             <div>
-
               <label className="mb-2 block text-sm font-medium text-gray-700">
                 Number of Travellers
               </label>
@@ -180,12 +156,9 @@ function Planner() {
                 <option value="4 Travellers">4 Travellers</option>
                 <option value="5+ Travellers">5+ Travellers</option>
               </select>
-
             </div>
 
-
             <div>
-
               <label className="mb-2 block text-sm font-medium text-gray-700">
                 Budget
               </label>
@@ -200,67 +173,34 @@ function Planner() {
                 <option value="Moderate">Moderate</option>
                 <option value="Luxury">Luxury</option>
               </select>
-
             </div>
-
           </div>
-
 
           {/* Travel Preferences */}
           <div className="mt-6">
-
             <label className="mb-3 block text-sm font-medium text-gray-700">
               Travel Preferences
             </label>
 
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-
-              <button
-                type="button"
-                className="rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-700 hover:border-blue-500 hover:text-blue-600"
-              >
-                Adventure
-              </button>
-
-              <button
-                type="button"
-                className="rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-700 hover:border-blue-500 hover:text-blue-600"
-              >
-                Nature
-              </button>
-
-              <button
-                type="button"
-                className="rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-700 hover:border-blue-500 hover:text-blue-600"
-              >
-                Food
-              </button>
-
-              <button
-                type="button"
-                className="rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-700 hover:border-blue-500 hover:text-blue-600"
-              >
-                Culture
-              </button>
-
-              <button
-                type="button"
-                className="rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-700 hover:border-blue-500 hover:text-blue-600"
-              >
-                Shopping
-              </button>
-
-              <button
-                type="button"
-                className="rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-700 hover:border-blue-500 hover:text-blue-600"
-              >
-                Relaxation
-              </button>
-
+              {[
+                'Adventure',
+                'Nature',
+                'Food',
+                'Culture',
+                'Shopping',
+                'Relaxation'
+              ].map((preference) => (
+                <button
+                  key={preference}
+                  type="button"
+                  className="rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-700 hover:border-blue-500 hover:text-blue-600"
+                >
+                  {preference}
+                </button>
+              ))}
             </div>
-
           </div>
-
 
           {/* Create Trip Button */}
           <button
@@ -269,21 +209,13 @@ function Planner() {
           >
             Create My Trip
           </button>
-
         </form>
-
       </section>
-
 
       {/* Footer */}
       <footer className="bg-gray-800 px-6 py-6 text-center text-sm text-gray-300">
-
-        <p>
-          © 2026 TravelMate. All rights reserved.
-        </p>
-
+        <p>© 2026 TravelMate. All rights reserved.</p>
       </footer>
-
     </div>
   )
 }
