@@ -86,8 +86,7 @@ function App() {
 
         <p className="mx-auto mt-4 max-w-2xl text-blue-100">
           Plan your trips easily, explore new destinations,
-          and organize your travel journey in one place.
-        </p>
+          and organize your travel journey in one place- Now Online!        </p>
 
         <a
           href="/planner"
