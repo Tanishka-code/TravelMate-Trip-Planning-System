@@ -1,23 +1,66 @@
-import { createContext, useState } from 'react'
+import { createContext, useEffect, useState } from 'react'
+import { API_BASE_URL } from '../api'
 
 export const AuthContext = createContext()
 
 function AuthProvider({ children }) {
-  const [currentUser, setCurrentUser] = useState(() => {
-    const savedUser = localStorage.getItem('currentUser')
-    return savedUser ? JSON.parse(savedUser) : null
-  })
+  const [currentUser, setCurrentUser] = useState(null)
+  const [token, setToken] = useState(() => localStorage.getItem('token') || null)
+  const [loading, setLoading] = useState(true)
 
-  const [token, setToken] = useState(
-    () => localStorage.getItem('token') || null
-  )
+  useEffect(() => {
+    const validateSession = async () => {
+      const savedToken = localStorage.getItem('token')
+
+      if (!savedToken) {
+        setCurrentUser(null)
+        setLoading(false)
+        return
+      }
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/users/profile`, {
+          headers: {
+            Authorization: `Bearer ${savedToken}`
+          }
+        })
+
+        if (!response.ok) {
+          throw new Error('Session invalid')
+        }
+
+        const data = await response.json()
+        const user = data.user || null
+
+        if (!user) {
+          throw new Error('Profile missing')
+        }
+
+        setCurrentUser(user)
+        setToken(savedToken)
+        localStorage.setItem('currentUser', JSON.stringify(user))
+      } catch (error) {
+        localStorage.removeItem('currentUser')
+        localStorage.removeItem('token')
+        setCurrentUser(null)
+        setToken(null)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    validateSession()
+  }, [])
 
   const login = (user, jwtToken) => {
+    const normalizedToken = jwtToken || token
     setCurrentUser(user)
-    setToken(jwtToken)
+    setToken(normalizedToken)
 
     localStorage.setItem('currentUser', JSON.stringify(user))
-    localStorage.setItem('token', jwtToken)
+    if (normalizedToken) {
+      localStorage.setItem('token', normalizedToken)
+    }
   }
 
   const logout = () => {
@@ -26,6 +69,7 @@ function AuthProvider({ children }) {
 
     localStorage.removeItem('currentUser')
     localStorage.removeItem('token')
+    window.dispatchEvent(new PopStateEvent('popstate'))
   }
 
   return (
@@ -33,6 +77,7 @@ function AuthProvider({ children }) {
       value={{
         currentUser,
         token,
+        loading,
         login,
         logout
       }}

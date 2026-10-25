@@ -14,22 +14,43 @@ const userRoutes = require("./routes/userRoutes");
 const app = express();
 const server = http.createServer(app);
 
-// Allowed frontend origins
+const configuredOrigins = (process.env.FRONTEND_URL || "")
+  .split(",")
+  .map((origin) => origin.trim().replace(/\/$/, ""))
+  .filter(Boolean);
+
 const allowedOrigins = [
-  process.env.FRONTEND_URL,
+  ...configuredOrigins,
   "http://localhost:5173",
   "http://localhost:5174"
-].filter(Boolean);
+];
+
+const checkOrigin = (origin, callback) => {
+  if (!origin || allowedOrigins.includes(origin)) {
+    callback(null, true);
+    return;
+  }
+
+  const error = new Error("Origin is not allowed by CORS");
+  error.statusCode = 403;
+  callback(error);
+};
 
 // Shared CORS configuration
 const corsOptions = {
-  origin: allowedOrigins,
-  methods: ["GET", "POST"]
+  origin: checkOrigin,
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true
 };
 
 // Socket.IO configuration
 const io = new Server(server, {
-  cors: corsOptions
+  cors: {
+    ...corsOptions,
+    origin: checkOrigin
+  },
+  transports: ["websocket", "polling"]
 });
 
 // Security middleware
@@ -53,6 +74,15 @@ app.use("/api", apiLimiter);
 // Root route
 app.get("/", (req, res) => {
   res.send("TravelMate API is Running");
+});
+
+app.get("/health", (req, res) => {
+  const isDatabaseConnected = mongoose.connection.readyState === 1;
+
+  res.status(isDatabaseConnected ? 200 : 503).json({
+    status: isDatabaseConnected ? "ok" : "unavailable",
+    database: isDatabaseConnected ? "connected" : "disconnected"
+  });
 });
 
 // Existing TravelMate APIs
@@ -105,10 +135,13 @@ io.on("connection", (socket) => {
       return;
     }
 
+    const timestamp = new Date().toISOString();
+
     // Broadcast to all connected clients
     io.emit("chatMessage", {
       username,
-      message
+      message,
+      timestamp
     });
   });
 
@@ -117,22 +150,52 @@ io.on("connection", (socket) => {
   });
 });
 
-// MongoDB connection and server startup
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => {
+const requiredEnvironmentVariables = ["MONGO_URI", "JWT_SECRET"];
+const missingEnvironmentVariables = requiredEnvironmentVariables.filter(
+  (name) => !process.env[name]?.trim()
+);
+const port = Number(process.env.PORT || 5000);
+const trustProxyHops = Number(process.env.TRUST_PROXY || 0);
+
+if (missingEnvironmentVariables.length > 0) {
+  console.error(
+    `Missing required environment variables: ${missingEnvironmentVariables.join(", ")}`
+  );
+  process.exit(1);
+}
+
+if (!Number.isInteger(port) || port < 1 || port > 65535) {
+  console.error("PORT must be an integer between 1 and 65535.");
+  process.exit(1);
+}
+
+if (!Number.isInteger(trustProxyHops) || trustProxyHops < 0) {
+  console.error("TRUST_PROXY must be a non-negative integer.");
+  process.exit(1);
+}
+
+app.set("trust proxy", trustProxyHops);
+
+const startServer = async () => {
+  try {
+    await mongoose.connect(process.env.MONGO_URI);
     console.log("MongoDB Connected");
     console.log("Database:", mongoose.connection.name);
 
-    const PORT = process.env.PORT || 5000;
-
-    server.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
+    server.listen(port, "0.0.0.0", () => {
+      console.log(`Server running on port ${port}`);
     });
-  })
-  .catch((error) => {
-    console.log(
-      "MongoDB Connection Error:",
-      error.message
-    );
-  });
+  } catch (error) {
+    console.error(`MongoDB connection failed: ${error.message}`);
+    process.exitCode = 1;
+    await mongoose.disconnect();
+  }
+};
+
+server.on("error", (error) => {
+  console.error(`HTTP server failed to listen: ${error.message}`);
+  process.exitCode = 1;
+  mongoose.disconnect().finally(() => process.exit(1));
+});
+
+startServer();

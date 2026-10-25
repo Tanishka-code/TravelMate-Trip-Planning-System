@@ -2,9 +2,16 @@ const mongoose = require("mongoose");
 
 const tripSchema = new mongoose.Schema(
   {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true
+    },
+
     destination: {
       type: String,
-      required: true
+      required: true,
+      trim: true
     },
 
     startDate: {
@@ -18,13 +25,15 @@ const tripSchema = new mongoose.Schema(
     },
 
     travellers: {
-      type: String,
-      required: true
+      type: Number,
+      required: true,
+      min: 1
     },
 
     budget: {
-      type: String,
-      required: true
+      type: Number,
+      required: true,
+      min: 0
     },
 
     preferences: {
@@ -39,5 +48,7 @@ const tripSchema = new mongoose.Schema(
     timestamps: true
   }
 );
+
+tripSchema.index({ userId: 1, createdAt: -1 });
 
 module.exports = mongoose.model("Trip", tripSchema);

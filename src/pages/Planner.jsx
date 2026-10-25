@@ -1,101 +1,153 @@
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
+import { AuthContext } from '../Context/AuthContext'
 import { TripContext } from '../Context/TripContext'
+import { API_BASE_URL } from '../api'
 
-function Planner() {
-  const { addTrip } = useContext(TripContext)
+function Planner({ onNavigate }) {
+  const { currentUser, token } = useContext(AuthContext)
+  const { fetchTrips, upsertTrip } = useContext(TripContext)
 
   const [destination, setDestination] = useState('')
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
   const [travellers, setTravellers] = useState('')
   const [budget, setBudget] = useState('')
+  const [preferenceTags, setPreferenceTags] = useState([])
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
+  const [successMessage, setSuccessMessage] = useState('')
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const destinationFromQuery = params.get('destination')
+    if (destinationFromQuery) {
+      setDestination(destinationFromQuery)
+    }
+  }, [])
 
-    const newTrip = {
-      id: Date.now(),
-      destination,
-      startDate,
-      endDate,
-      travellers,
-      budget
+  const availablePreferences = useMemo(
+    () => ['Adventure', 'Nature', 'Food', 'Culture', 'Shopping', 'Relaxation'],
+    []
+  )
+
+  const togglePreference = (preference) => {
+    setPreferenceTags((current) =>
+      current.includes(preference)
+        ? current.filter((item) => item !== preference)
+        : [...current, preference]
+    )
+  }
+
+  const validateTrip = () => {
+    if (!destination.trim()) return 'Destination is required.'
+    if (!startDate || !endDate) return 'Trip dates are required.'
+    if (new Date(startDate) > new Date(endDate)) return 'Start date cannot be later than end date.'
+    if (!travellers || Number(travellers) < 1) return 'Traveller count must be at least 1.'
+    if (!budget || Number(budget) < 0) return 'Budget must be zero or a positive number.'
+
+    return ''
+  }
+
+  const handleSubmit = async (event) => {
+    event.preventDefault()
+
+    if (!currentUser || !token) {
+      setErrorMessage('Please log in to plan a trip.')
+      return
     }
 
-    addTrip(newTrip)
+    const validationError = validateTrip()
+    if (validationError) {
+      setErrorMessage(validationError)
+      setSuccessMessage('')
+      return
+    }
 
-    console.log('Trip Added:', newTrip)
+    setIsSubmitting(true)
+    setErrorMessage('')
+    setSuccessMessage('')
 
-    setDestination('')
-    setStartDate('')
-    setEndDate('')
-    setTravellers('')
-    setBudget('')
+    const payload = {
+      destination: destination.trim(),
+      startDate,
+      endDate,
+      travellers: Number(travellers),
+      budget: Number(budget),
+      preferences: preferenceTags.join(', '),
+      description: preferenceTags.length ? `Preferred: ${preferenceTags.join(', ')}` : ''
+    }
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/trips`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      })
+
+      const data = await response.json().catch(() => ({}))
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Unable to create trip')
+      }
+
+      upsertTrip(data)
+      await fetchTrips()
+      setSuccessMessage('Trip created successfully!')
+      setDestination('')
+      setStartDate('')
+      setEndDate('')
+      setTravellers('')
+      setBudget('')
+      setPreferenceTags([])
+    } catch (error) {
+      setErrorMessage(error.message || 'Unable to create your trip.')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Navbar */}
       <nav className="bg-white shadow-sm">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <a
-            href="/"
-            className="text-xl font-bold text-blue-600"
-          >
-            TravelMate
-          </a>
+          <button type="button" onClick={() => onNavigate?.('/dashboard')} className="text-xl font-bold text-blue-600">TravelMate</button>
 
           <div className="flex gap-5 text-sm">
-            <a
-              href="/"
-              className="text-gray-600 hover:text-blue-600"
-            >
-              Home
-            </a>
-
-            <a
-              href="/destinations"
-              className="text-gray-600 hover:text-blue-600"
-            >
-              Destinations
-            </a>
-
-            <a
-              href="/auth"
-              className="text-gray-600 hover:text-blue-600"
-            >
-              Login
-            </a>
+            <button type="button" onClick={() => onNavigate?.('/dashboard')} className="text-gray-600 hover:text-blue-600">Home</button>
+            <button type="button" onClick={() => onNavigate?.('/destinations')} className="text-gray-600 hover:text-blue-600">Destinations</button>
+            <button type="button" onClick={() => onNavigate?.('/my-trips')} className="text-gray-600 hover:text-blue-600">My Trips</button>
+            <button type="button" onClick={() => onNavigate?.('/chat')} className="text-gray-600 hover:text-blue-600">Community</button>
           </div>
         </div>
       </nav>
 
-      {/* Page Heading */}
       <section className="px-6 py-10 text-center">
-        <h1 className="text-3xl font-bold text-gray-800">
-          Plan Your Trip
-        </h1>
-
-        <p className="mt-3 text-gray-600">
-          Enter your trip details and create your travel plan.
-        </p>
+        <h1 className="text-3xl font-bold text-gray-800">Plan Your Trip</h1>
+        <p className="mt-3 text-gray-600">Enter your trip details and create your travel plan.</p>
       </section>
 
-      {/* Trip Form */}
       <section className="mx-auto max-w-3xl px-6 pb-12">
-        <form
-          onSubmit={handleSubmit}
-          className="rounded-lg bg-white p-6 shadow-sm"
-        >
-          {/* Destination */}
-          <div>
-            <label className="mb-2 block text-sm font-medium text-gray-700">
-              Destination
-            </label>
+        <form onSubmit={handleSubmit} className="rounded-lg bg-white p-6 shadow-sm">
+          {errorMessage && (
+            <p role="alert" className="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+              {errorMessage}
+            </p>
+          )}
 
+          {successMessage && (
+            <p role="status" className="mb-4 rounded-md border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
+              {successMessage}
+            </p>
+          )}
+
+          <div>
+            <label className="mb-2 block text-sm font-medium text-gray-700">Destination</label>
             <select
               value={destination}
-              onChange={(e) => setDestination(e.target.value)}
+              onChange={(event) => setDestination(event.target.value)}
               className="w-full rounded-md border border-gray-300 px-4 py-2 outline-none focus:border-blue-500"
             >
               <option value="">Select destination</option>
@@ -108,111 +160,87 @@ function Planner() {
             </select>
           </div>
 
-          {/* Dates */}
           <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
             <div>
-              <label className="mb-2 block text-sm font-medium text-gray-700">
-                Start Date
-              </label>
-
+              <label className="mb-2 block text-sm font-medium text-gray-700">Start Date</label>
               <input
                 type="date"
                 value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
+                onChange={(event) => setStartDate(event.target.value)}
                 className="w-full rounded-md border border-gray-300 px-4 py-2 outline-none focus:border-blue-500"
               />
             </div>
 
             <div>
-              <label className="mb-2 block text-sm font-medium text-gray-700">
-                End Date
-              </label>
-
+              <label className="mb-2 block text-sm font-medium text-gray-700">End Date</label>
               <input
                 type="date"
                 value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
+                onChange={(event) => setEndDate(event.target.value)}
                 className="w-full rounded-md border border-gray-300 px-4 py-2 outline-none focus:border-blue-500"
               />
             </div>
           </div>
 
-          {/* Travellers and Budget */}
           <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
             <div>
-              <label className="mb-2 block text-sm font-medium text-gray-700">
-                Number of Travellers
-              </label>
-
-              <select
+              <label className="mb-2 block text-sm font-medium text-gray-700">Number of Travellers</label>
+              <input
+                type="number"
+                min="1"
                 value={travellers}
-                onChange={(e) => setTravellers(e.target.value)}
+                onChange={(event) => setTravellers(event.target.value)}
+                placeholder="2"
                 className="w-full rounded-md border border-gray-300 px-4 py-2 outline-none focus:border-blue-500"
-              >
-                <option value="">Select travellers</option>
-                <option value="1 Traveller">1 Traveller</option>
-                <option value="2 Travellers">2 Travellers</option>
-                <option value="3 Travellers">3 Travellers</option>
-                <option value="4 Travellers">4 Travellers</option>
-                <option value="5+ Travellers">5+ Travellers</option>
-              </select>
+              />
             </div>
 
             <div>
-              <label className="mb-2 block text-sm font-medium text-gray-700">
-                Budget
-              </label>
-
-              <select
+              <label className="mb-2 block text-sm font-medium text-gray-700">Budget (₹)</label>
+              <input
+                type="number"
+                min="0"
                 value={budget}
-                onChange={(e) => setBudget(e.target.value)}
+                onChange={(event) => setBudget(event.target.value)}
+                placeholder="15000"
                 className="w-full rounded-md border border-gray-300 px-4 py-2 outline-none focus:border-blue-500"
-              >
-                <option value="">Select budget</option>
-                <option value="Budget">Budget</option>
-                <option value="Moderate">Moderate</option>
-                <option value="Luxury">Luxury</option>
-              </select>
+              />
             </div>
           </div>
 
-          {/* Travel Preferences */}
           <div className="mt-6">
-            <label className="mb-3 block text-sm font-medium text-gray-700">
-              Travel Preferences
-            </label>
-
+            <label className="mb-3 block text-sm font-medium text-gray-700">Travel Preferences</label>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-              {[
-                'Adventure',
-                'Nature',
-                'Food',
-                'Culture',
-                'Shopping',
-                'Relaxation'
-              ].map((preference) => (
-                <button
-                  key={preference}
-                  type="button"
-                  className="rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-700 hover:border-blue-500 hover:text-blue-600"
-                >
-                  {preference}
-                </button>
-              ))}
+              {availablePreferences.map((preference) => {
+                const selected = preferenceTags.includes(preference)
+                return (
+                  <button
+                    key={preference}
+                    type="button"
+                    onClick={() => togglePreference(preference)}
+                    className={`rounded-md border px-3 py-2 text-sm ${
+                      selected
+                        ? 'border-blue-500 bg-blue-50 text-blue-700'
+                        : 'border-gray-300 text-gray-700 hover:border-blue-500 hover:text-blue-600'
+                    }`}
+                  >
+                    {preference}
+                  </button>
+                )
+              })}
             </div>
           </div>
 
-          {/* Create Trip Button */}
           <button
             type="submit"
-            className="mt-7 w-full rounded-md bg-blue-600 py-2.5 font-medium text-white hover:bg-blue-700"
+            disabled={isSubmitting}
+            className="mt-7 w-full rounded-md bg-blue-600 py-2.5 font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            Create My Trip
+            {isSubmitting ? 'Creating trip...' : 'Create My Trip'}
           </button>
         </form>
       </section>
 
-      {/* Footer */}
       <footer className="bg-gray-800 px-6 py-6 text-center text-sm text-gray-300">
         <p>© 2026 TravelMate. All rights reserved.</p>
       </footer>

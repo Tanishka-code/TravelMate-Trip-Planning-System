@@ -1,0 +1,22 @@
+services:
+  backend:
+    environment:
+      MONGO_URI: mongodb://mongodb:27017/travelmate
+    depends_on:
+      mongodb:
+        condition: service_healthy
+
+  mongodb:
+    image: mongo:8
+    restart: unless-stopped
+    volumes:
+      - travelmate-mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      start_period: 10s
+      retries: 5
+
+volumes:
+  travelmate-mongo-data:

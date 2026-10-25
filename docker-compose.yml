@@ -2,21 +2,38 @@ services:
   backend:
     build:
       context: ./backend
-    container_name: travelmate-backend
-    ports:
-      - "5000:5000"
-    env_file:
-      - ./backend/.env
     environment:
       PORT: 5000
+      TRUST_PROXY: 1
+      MONGO_URI: ${MONGO_URI:-}
+      JWT_SECRET: ${JWT_SECRET:-}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:5173}
+    ports:
+      - "${BACKEND_PORT:-5000}:5000"
     restart: unless-stopped
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:5000/health').then((r) => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"
+      interval: 30s
+      timeout: 5s
+      start_period: 20s
+      retries: 3
 
   frontend:
     build:
       context: .
-    container_name: travelmate-frontend
     ports:
-      - "5173:5173"
+      - "${FRONTEND_PORT:-5173}:80"
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1/ >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 5s
+      start_period: 5s
+      retries: 3
